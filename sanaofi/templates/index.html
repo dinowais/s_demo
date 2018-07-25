@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load staticfiles %}
+{% block content %}
+	<header>
+        <h1 class="header_abs" id="header_logo">
+	        <a href="{% url 'home'%}"><img class="header_image" src="{% static 'images/PVAI_social_logo.png' %}">
+</a>
+        </h1>
+
+</header>
+    <style type="text/css">
+        iframe {
+            width: 100%;
+            height: 420px;
+            overflow: hidden;
+            border: none;
+        }
+    </style>
+
+<!--<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">-->
+    <!--<div class="modal-dialog modal-lg" role="document">-->
+        <!--<div class="modal-content">-->
+            <!--...-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+    <!--<div class="row container-fluid">-->
+    <!--<div class="col-md-4">-->
+    <!--<label for="id_label_multiple">-->
+    <!--Social:-->
+    <!--<select class="js-example-basic-multiple js-states form-control" id="id_label_multiple"-->
+    <!--multiple="multiple">-->
+    <!--<option value="twitter">Twitter</option>-->
+    <!--<option value="facebook">Facebook</option>-->
+    <!--</select>-->
+    <!--</label>-->
+    <!--</div>-->
+    <!--<div class="col-md-4"></div>-->
+    <!--<div class="col-md-4"></div>-->
+    <!--</div>-->
+
+    <div class="row container-fluid chart_div">
+        <div class="col-md-4">
+            <div id="social" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="drugs" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="events" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        </div>
+	    <div class="row charts_labs">
+    <div class="col-md-4 chart_labels">
+	    <span>Social Sources</span>
+	    </div>
+    <div class="col-md-4 chart_labels">
+	    <span >Product Mentions</span>
+	    </div>
+    <div class="col-md-4 chart_labels">
+	    <span>Top Adverse Events</span>
+	    </div>
+    </div>
+	    </div>
+
+    <div class="row container-fluid">
+	<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#keyword">Products</a></li>
+  <li><a data-toggle="tab" href="#aewords">Adverse Events</a></li>
+
+</ul>
+	    <div class="tab-content">
+<div id="keyword" role="region" class="col-md-12 tab-pane fade in active" style="width: 100%;height: 300px;">
+        </div>
+		<div id="aewords" role="region" class="col-md-12 tab-pane" style="width: 100%;height: 300px;">
+        </div>
+
+
+    </div>
+
+</div>
+<div id="network_cloud" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" style="height: 600px;">
+        <div class="modal-header">
+        <button id="modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title text-center " style="color: #275f76" id="gridSystemModalLabel">Potential Drug-Adverse Event depiction</h4>
+      </div>
+        <div class="network_cloud_graph modal-body" style="padding-bottom: 0px;">
+
+        </div>
+    </div>
+  </div>
+</div>
+<!--<script src="{% static 'js/sql.js' %}"></script>-->
+		<script src="{% static 'js/odometer.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    var social_ticker_count = {{ social_ticker|safe }};
+    var drugs_ticker_count = {{ drugs_ticker|safe  }};
+    var avfs_ticker_count = {{ avfs_ticker|safe }}
+    window.social_ticker_count =social_ticker_count;
+    window.drugs_ticker_count =drugs_ticker_count;
+    window.avfs_ticker_count =avfs_ticker_count;
+
+setTimeout(function(){
+    odometer.innerHTML = social_ticker_count;
+
+}, 1000);
+
+setTimeout(function(){
+    drug_counts.innerHTML = drugs_ticker_count;
+
+}, 1000);
+
+setTimeout(function(){
+    aevents.innerHTML = avfs_ticker_count;
+
+}, 1000);
+	});
+
+    $(document).ready(function () {
+        var SocialData = {{ social_posts|safe }};
+        var DrugData = {{ drugs|safe }};
+        var AvfsData = {{ adverse_effects|safe }};
+	    var wordsd ={{ key_cloud | safe }};
+
+
+        var words = new Array();
+        for ( var i = 0; i < wordsd.length; ++i ) {
+		var x = wordsd[i];
+		words.push({
+				text: x.text,
+				weight: x.weight,
+            handlers: {
+    click: function() {
+        var drug_name = $(this).html();
+        var url = '/net_clouds/' + drug_name;
+        $("#mynetwork1").html("");
+        $('#network_cloud').modal('show');
+        send_ajax_request('','GET',url=url,target='.network_cloud_graph');
+        }
+        }
+        });
+        }
+
+
+
+
+        $("#keyword").jQCloud('destroy');
+        $("#keyword").jQCloud(words);
+        $(function () {
+            Array.prototype.max = function () {
+                return Math.max.apply(null, this)
+            };
+
+            Array.prototype.min = function () {
+                return Math.min.apply(null, this);
+            };
+        });
+        var SocialGlobal = Social;
+        window.SocialGlobal = SocialGlobal;
+        SocialGlobal(SocialData);
+
+        var DrugGlobal = Drug;
+        window.DrugGlobal = DrugGlobal;
+        DrugGlobal(DrugData);
+
+        var AvfsGlobal = Avfs;
+        window.AvfsGlobal = AvfsGlobal;
+        AvfsGlobal(AvfsData);
+
+    });
+    	var aewords = {{ aecloud | safe }}
+    $("#aewords").jQCloud('destroy');
+        $("#aewords").jQCloud(aewords);
+        $(function () {
+            Array.prototype.max = function () {
+                return Math.max.apply(null, this)
+            };
+
+            Array.prototype.min = function () {
+                return Math.min.apply(null, this);
+            };
+        });
+    var Social = function(SocialData){
+            Highcharts.chart('social', {
+                exporting: { enabled: false },
+	    colors: ['#275f76', '#428ec5', '#32b7a9', '#69c8c6','#69c8c3'],
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    title: {
+        useHTML: true,
+        text: "<img src='{% static 'images/GR_social source.png' %}' alt='' width='50px' height='50px'/>",
+        align: 'center',
+        verticalAlign: 'center',
+        y: 180
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            dataLabels: {
+                enabled: true,
+                distance: 10,
+                style: {
+                    fontWeight: 'bold',
+                    fontSize:'12px',
+                    color: '#275F76'
+                }
+            },
+            startAngle: -180,
+            endAngle: 180,
+            center: ['50%', '50%']
+        }
+    },
+	    credits: {
+                enabled: false,
+                href: "http://www.highcharts.com",
+                position: {align: "right", x: -10, verticalAlign: "bottom", y: -5},
+                style: {cursor: "pointer", color: "#999999", fontSize: "9px"},
+                text: "Highcharts.com"
+            },
+    series: [{
+        type: 'pie',
+        name: 'Share',
+        innerSize: '50%',
+        data: SocialData,
+    }]
+});
+    }
+    var Drug = function(DrugData){
+        Highcharts.chart('drugs', {
+            exporting: { enabled: false },
+            colors:['#69c8c6'],
+        chart: {
+            type: 'column'
+        },
+         title: {
+            useHTML: true,
+            text: "<img src='{% static 'images/GR_capsule.png' %}' alt='' width='60px' height='60px'/>",
+            align: 'center',
+            verticalAlign: 'center',
+            y: 170,
+             x:50
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '10px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total Social Mentions'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: 'Total Social Mentions: <b>{point.y}</b>'
+        },
+            credits: {
+                    enabled: false,
+                    href: "http://www.highcharts.com",
+                    position: {align: "right", x: -10, verticalAlign: "bottom", y: -5},
+                    style: {cursor: "pointer", color: "#999999", fontSize: "9px"},
+                    text: "Highcharts.com"
+                },
+        series: [{
+            name: 'Drugs',
+            data: DrugData,
+            dataLabels: {
+                enabled: false,
+                rotation: -90,
+                color: '#FFFFFF',
+                align: 'right',
+                format: '{point.y}', // one decimal
+                y: 10, // 10 pixels down from the top
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        }]
+
+    });
+    }
+    var Avfs = function(AvfsData){
+        Highcharts.chart('events', {
+            exporting: { enabled: false },
+            colors:['#428ec5'],
+        chart: {
+            type: 'column'
+        },
+       title: {
+            useHTML: true,
+            text: "<img src='{% static 'images/GR_Top Adverse Events.png' %}' alt='' width='60px' height='60px'/>",
+            align: 'center',
+            verticalAlign: 'center',
+             y: 170,
+             x:50
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category',
+            labels: {
+                rotation: -45,
+                style: {
+                    fontSize: '10px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total Adverse Events'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: 'Total Adverse Events: <b>{point.y}</b>'
+        },
+            credits: {
+                    enabled: false,
+                    href: "http://www.highcharts.com",
+                    position: {align: "right", x: -10, verticalAlign: "bottom", y: -5},
+                    style: {cursor: "pointer", color: "#999999", fontSize: "9px"},
+                    text: "Highcharts.com"
+                },
+        series: [{
+            name: 'Adverse Events',
+            data: AvfsData,
+            dataLabels: {
+                enabled: false,
+                rotation: -90,
+                color: '#FFFFFF',
+                align: 'right',
+                format: '{point.y}', // one decimal
+                y: 10, // 10 pixels down from the top
+                style: {
+                    fontSize: '13px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        }]
+    });
+    }
+
+</script>
+{% endblock %}

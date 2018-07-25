@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/ico" href="{% static "images/icon.ico" %}">
+    <title>Drugbuzz</title>
+    <script src="{% static 'js/vis.js' %}"></script>
+    <link href="{% static 'css/vis-timeline-graph2d.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/timeline.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'keyword/src/jqcloud.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'bootstrap-3.3.7/css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
+	<link href="{% static 'css/custom.css' %}" rel="stylesheet"/>
+        <script src="{% static 'js/handlebars.js' %}"></script>
+    <script id="item-template" type="text/x-handlebars-template">
+        <div class="item-meta hide">
+            <div class="event-details">
+                <h3>{{ name }}</h3>
+
+                <p>{{ category }} {{ group }}</p>
+
+                <p> A basic timeline. You can move and zoom the timeline, and select items. A basic timeline. You can
+                    move and zoom the timeline, and select items.</p>
+            </div>
+        </div>
+    </script>
+    <script src="{% static 'js/jquery-1.12.4.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/highcharts.js' %}"></script>
+    <script src="{% static 'js/exporting.js' %}"></script>
+    <script src="{% static 'keyword/src/jqcloud.js' %}"></script>
+    <script src="{% static 'js/select2.js' %}"></script>
+    </head>
+<body>
+
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+    var dataArray = {{lst|safe}};
+    function RenderGraph() {
+//                  JSON.each(function() {
+//              var node = $(this).data("node");
+//              var edge = $(this).data('edge');
+//              var container_id = $(this).data('id');
+//              GRAPH_SHARE(node,edge, container_id);
+//          });
+//                 $('.share').each(function() {
+//              var node = $(this).data("node");
+//              var edge = $(this).data('edge');
+//              var container_id = $(this).data('id');
+        $(jQuery.parseJSON(JSON.stringify(dataArray))).each(function (index) {
+            var node = this.node;
+            var edge = this.edge;
+            var inc = index + 1
+            var container = "mynetwork";
+            console.log(container);
+            GRAPH_SHARE(node, edge, container);
+        });
+
+//          });
+
+    }
+    $(document).ready(function () {
+        RenderGraph();
+    });
+
+
+    GRAPH_SHARE = function (node, edge, container_id) {
+        var nodes = new vis.DataSet(node);
+        // create an array with edges
+        var edges = new vis.DataSet(edge);       // create a network
+        var container = document.getElementById(container_id);
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var parserOptions = {
+            edges: {
+                inheritColors: true
+            },
+            nodes: {
+                fixed: false,
+                parseColor: true,
+                shape: 'ellipse',
+                shadow: true,
+            }
+        }
+        var options = {
+            width: '100%',
+            height: '550px',
+            nodes: {
+                color: {
+                    border: '#69c8c6',
+                    background: '#ffffff',
+                },
+                font: '16px arial #69c8c6',
+                shape: 'box',
+                shapeProperties: {
+                    borderDashes: false, // only for borders
+                    borderRadius: 6,     // only for box shape
+                    interpolation: false,  // only for image and circularImage shapes
+                    useImageSize: false,  // only for image and circularImage shapes
+                    useBorderWithImage: false  // only for image shape
+                }
+            },
+{#            physics: {#}
+{#                barnesHut: {#}
+{#                    enabled: true,#}
+{#                    gravitationalConstant: -7500,#}
+{#                    centralGravity: 30,#}
+{#                    springLength: 100,#}
+{#                    springConstant: 25,#}
+{#                    damping:2.5,#}
+{#                    avoidOverlap:0#}
+{#                    },#}
+{#                solver: 'barnesHut',#}
+{#            },#}
+            layout: {
+                hierarchical: false,
+                improvedLayout: true,
+                randomSeed: undefined,
+            },
+            edges: {
+                color: '#69c8c6',
+                width: 2,
+                smooth: {
+                    type: 'continuous',
+                    forceDirection: 'none',
+                    roundness: 0.00
+                }
+            }
+        };
+        var network = new vis.Network(container, data, options);
+    };
+</script>
+<script src="{% static 'js/pie_charts.js' %}"></script>
+<script src="{% static 'js/keyword_trigger.js' %}"></script>
+</body>
+</html>

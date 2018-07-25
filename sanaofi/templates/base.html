@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/ico" href="{% static "images/icon.ico" %}">
+    <title>PV Social</title>
+    <script src="{% static 'js/vis.js' %}"></script>
+    <link href="{% static 'css/vis-timeline-graph2d.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/timeline.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'keyword/src/jqcloud.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'bootstrap-3.3.7/css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/select2.css' %}" rel="stylesheet"/>
+	<link href="{% static 'css/custom.css' %}" rel="stylesheet"/>
+        <script src="{% static 'js/handlebars.js' %}"></script>
+    <script id="item-template" type="text/x-handlebars-template">
+        <div class="item-meta hide">
+            <div class="event-details">
+                <h3>{{ name }}</h3>
+
+                <p>{{ category }} {{ group }}</p>
+
+                <p> A basic timeline. You can move and zoom the timeline, and select items. A basic timeline. You can
+                    move and zoom the timeline, and select items.</p>
+            </div>
+        </div>
+    </script>
+    <script src="{% static 'js/jquery-1.12.4.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/highcharts.js' %}"></script>
+    <script src="{% static 'js/exporting.js' %}"></script>
+    <script src="{% static 'keyword/src/jqcloud.js' %}"></script>
+    <script src="{% static 'js/select2.js' %}"></script>
+</head>
+
+<body>
+{% block content %}
+{% endblock content %}
+<!-- Start of StatCounter Code for Default Guide -->
+    <script type="text/javascript">
+    var sc_project= 11315640;
+    var sc_invisible=1;
+    var sc_security="1fa55516";
+    var scJsHost = (("https:" == document.location.protocol) ?
+    "https://secure." : "http://www.");
+    document.write("<sc"+"ript type='text/javascript' src='" +
+    scJsHost+
+    "statcounter.com/counter/counter.js'></"+"script>");
+    </script>
+    <noscript><div class="statcounter"><a title="hit counter"
+    href="http://statcounter.com/" target="_blank"><img
+    class="statcounter"
+    src="//c.statcounter.com/11315640/0/1fa55516/1/" alt="hit
+    counter"></a></div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+<script src="{% static 'js/pie_charts.js' %}"></script>
+<script src="{% static 'js/keyword_trigger.js' %}"></script>
+</body>
+</html>
+
+
