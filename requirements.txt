@@ -1,4 +1,4 @@
-Django==1.11.14
+Django==1.11.29
 elasticsearch==2.2.0
 pytz==2018.5
 urllib3==1.23
